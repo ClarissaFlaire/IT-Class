@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'screen3.dart';
 
 void main() {
   runApp(const ReachUApp());
@@ -18,7 +19,7 @@ class ReachUApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: const DashboardPage(),
+      home: const Screen3(),
     );
   }
 }
