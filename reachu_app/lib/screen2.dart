@@ -274,6 +274,38 @@ class _TopicDetailPageState extends State<TopicDetailPage> {
     _messageController.clear();
   }
 
+void _showEditNoteDialog(List<String> list, int index) {
+  TextEditingController editController = TextEditingController(text: list[index]);
+
+  showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: const Text('Edit Note'),
+        content: TextField(
+          controller: editController,
+          decoration: const InputDecoration(hintText: 'Edit your note...'),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              setState(() {
+                list[index] = editController.text;
+              });
+              Navigator.pop(context);
+            },
+            child: const Text('Save'),
+          ),
+        ],
+      );
+    },
+  );
+}
+
   @override
   void dispose() {
     _suggestionController.dispose();
@@ -353,6 +385,9 @@ class _TopicDetailPageState extends State<TopicDetailPage> {
       topicSuggestions[widget.card.topic]!.removeAt(index);
     });
   },
+  onEdit: (index) {
+    _showEditNoteDialog(topicSuggestions[widget.card.topic]!, index);
+  },
 ),
 
     const SizedBox(height: 28),
@@ -386,13 +421,16 @@ class _TopicDetailPageState extends State<TopicDetailPage> {
     const SizedBox(height: 12),
 
     StickyNoteBoard(
-  notes: topicMessages[widget.card.topic]!,
-  onDelete: (index) {
-    setState(() {
-      topicMessages[widget.card.topic]!.removeAt(index);
-    });
-  },
-),
+      notes: topicMessages[widget.card.topic]!,
+      onDelete: (index) {
+        setState(() {
+          topicMessages[widget.card.topic]!.removeAt(index);
+        });
+      },
+      onEdit: (index) {
+        _showEditNoteDialog(topicMessages[widget.card.topic]!, index);
+      },
+    ),
   ],
 ),
     );
@@ -402,6 +440,7 @@ class StickyNote extends StatelessWidget {
   final String text;
   final Color color;
   final VoidCallback onDelete;
+  final VoidCallback onEdit;
   final double rotation;
 
   const StickyNote({
@@ -409,6 +448,7 @@ class StickyNote extends StatelessWidget {
     required this.text,
     required this.color,
     required this.onDelete,
+    required this.onEdit,
     required this.rotation,
   });
 
@@ -450,6 +490,18 @@ class StickyNote extends StatelessWidget {
     ),
   ),
 ),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              IconButton(
+                onPressed: onEdit,
+                icon: const Icon(
+                  Icons.edit_outlined,
+                  size: 19,
+                  color: Colors.blue,
+                ),
+                tooltip: 'Edit note',
+              ),
             IconButton(
               onPressed: onDelete,
               icon: const Icon(
@@ -460,7 +512,9 @@ class StickyNote extends StatelessWidget {
             ),
           ],
         ),
+      ],
       ),
+    ),
     );
   }
 }
@@ -468,11 +522,13 @@ class StickyNote extends StatelessWidget {
 class StickyNoteBoard extends StatelessWidget {
   final List<String> notes;
   final Function(int) onDelete;
+  final Function(int) onEdit;
 
   const StickyNoteBoard({
     super.key,
     required this.notes,
     required this.onDelete,
+    required this.onEdit,
   });
 
   final List<Color> noteColors = const [
@@ -523,6 +579,7 @@ class StickyNoteBoard extends StatelessWidget {
                   color: noteColors[index % noteColors.length],
                   rotation: rotations[index % rotations.length],
                   onDelete: () => onDelete(index),
+                  onEdit: () => onEdit(index),
                 ),
               );
                       }),
