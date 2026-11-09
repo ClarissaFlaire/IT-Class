@@ -293,10 +293,24 @@ void _showEditNoteDialog(List<String> list, int index) {
           ),
           ElevatedButton(
             onPressed: () {
-              setState(() {
-                list[index] = editController.text;
-              });
-              Navigator.pop(context);
+              // Trim white spaces from user input
+              final updatedText = editController.text.trim();
+
+              // Prevent saving if the input is empty
+              if (updatedText.isNotEmpty) {
+                setState(() {
+                  list[index] = updatedText;
+                });
+                Navigator.pop(context);
+              } else {
+                // Show warning message if user tries to save blank text
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Note cannot be empty.'),
+                    duration: Duration(seconds: 2),
+                  ),
+                );
+              }
             },
             child: const Text('Save'),
           ),
