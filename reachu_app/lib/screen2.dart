@@ -305,10 +305,22 @@ void _showEditNoteDialog(List<String> list, int index) {
               } else {
                 // Show warning message if user tries to save blank text
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Note cannot be empty.'),
-                    duration: Duration(seconds: 2),
+                  SnackBar(
+                    content: const Text(
+                      'Note cannot be empty.',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                    ),
                   ),
+                  backgroundColor: Colors.redAccent,
+                  duration: const Duration(seconds: 4),
+                  behavior: SnackBarBehavior.floating,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                ),
+                ),
                 );
               }
             },
